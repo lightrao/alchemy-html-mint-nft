@@ -3,13 +3,13 @@ import { abi, contractAddress } from "./constants.js";
 
 const connectButton = document.getElementById("connectButton");
 const mintButton = document.getElementById("mintButton");
-const addNftToMeataMaskButton = document.getElementById(
-  "addNftToMeataMaskButton"
+const addNftToMetaMaskButton = document.getElementById(
+  "addNftToMetaMaskButton"
 );
 
 connectButton.onclick = connect;
 mintButton.onclick = mintNFT;
-addNftToMeataMaskButton.onclick = addNFTToMetaMask;
+addNftToMetaMaskButton.onclick = addNFTToMetaMask;
 
 async function connect() {
   if (typeof window.ethereum !== "undefined") {
@@ -62,21 +62,21 @@ async function mintNFT() {
       mintButton.innerText = "Minted Successfully";
 
       // Logging key information from the transaction receipt
-      console.log("Transaction Receipt:");
-      console.log(` - Block Hash: ${receipt.blockHash}`);
-      console.log(` - Transaction Index: ${receipt.transactionIndex}`);
-      console.log(` - From: ${receipt.from}`);
-      console.log(` - To: ${receipt.to}`);
-      console.log(` - Gas Used: ${receipt.gasUsed.toString()}`);
-      console.log(
-        ` - Cumulative Gas Used: ${receipt.cumulativeGasUsed.toString()}`
-      );
-      console.log(` - Contract Address: ${receipt.contractAddress}`);
-      console.log(` - Status: ${receipt.status === 1 ? "Success" : "Failed"}`);
-      console.log(` - Confirmations: ${receipt.confirmations}`);
+      // console.log("Transaction Receipt:");
+      // console.log(` - Block Hash: ${receipt.blockHash}`);
+      // console.log(` - Transaction Index: ${receipt.transactionIndex}`);
+      // console.log(` - From: ${receipt.from}`);
+      // console.log(` - To: ${receipt.to}`);
+      // console.log(` - Gas Used: ${receipt.gasUsed.toString()}`);
+      // console.log(
+      //   ` - Cumulative Gas Used: ${receipt.cumulativeGasUsed.toString()}`
+      // );
+      // console.log(` - Contract Address: ${receipt.contractAddress}`);
+      // console.log(` - Status: ${receipt.status === 1 ? "Success" : "Failed"}`);
+      // console.log(` - Confirmations: ${receipt.confirmations}`);
     } catch (error) {
       console.error("Minting failed:", error);
-      fundButton.innerText = "Mint Failed";
+      mintButton.innerText = "Mint Failed";
     } finally {
       mintButton.disabled = false;
     }
@@ -86,7 +86,28 @@ async function mintNFT() {
   }
 }
 
-async function addNFTToMetaMask() {}
+async function addNFTToMetaMask(tokenId) {
+  try {
+    const wasAdded = await window.ethereum.request({
+      method: "wallet_watchAsset",
+      params: {
+        type: "ERC721",
+        options: {
+          address: contractAddress,
+          tokenId: tokenId,
+        },
+      },
+    });
+
+    if (wasAdded) {
+      console.log("NFT has been successfully added to MetaMask!");
+    } else {
+      console.log("Failed to add NFT to MetaMask.");
+    }
+  } catch (error) {
+    console.error("Error adding NFT to MetaMask", error);
+  }
+}
 
 function listenForTransactionMine(transactionResponse, provider) {
   console.log(`Mining ${transactionResponse.hash}`);
